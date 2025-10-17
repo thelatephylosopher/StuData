@@ -121,6 +121,12 @@
   --destructive-border: hsl(var(--destructive));
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
+.pie-chart-holder{
+  width: 40rem;
+}
+.categories{
+  flex-direction: column;
+}
 .rightBox{
   display: flex;
   flex-direction: column; /* horizontal stacking */

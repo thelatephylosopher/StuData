@@ -20,7 +20,7 @@ export default function RiskPieChart({ data }: RiskPieChartProps) {
   const total = data.lowRisk + data.mediumRisk + data.highRisk;
 
   return (
-    <div className="bg-card border border-card-border rounded-md p-6 shadow-sm">
+    <div className="pie-chart-holder bg-card border border-card-border rounded-md p-6 shadow-sm ">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-foreground">Risk Distribution</h3>
         <p className="text-2xl font-bold text-primary mt-2" data-testid="text-total-students">
@@ -48,7 +48,7 @@ export default function RiskPieChart({ data }: RiskPieChartProps) {
             verticalAlign="bottom" 
             height={36}
             formatter={(value, entry: any) => (
-              <span className="text-sm">
+              <span className="categories text-sm">
                 {value}: <strong>{entry.payload.value}</strong>
               </span>
             )}
