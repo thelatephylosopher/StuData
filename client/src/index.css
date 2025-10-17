@@ -121,6 +121,17 @@
   --destructive-border: hsl(var(--destructive));
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
+.rightBox{
+  display: flex;
+  flex-direction: column; /* horizontal stacking */
+  gap: 16px;
+}
+.RiskBox {
+
+  display: flex;
+  flex-direction: row; /* horizontal stacking */
+  gap: 16px;  
+}
 
 .dark {
   --button-outline: rgba(255,255,255, .10);

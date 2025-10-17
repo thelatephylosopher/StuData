@@ -52,16 +52,16 @@ export default function HomePage() {
       
       <main className="pt-24 px-6 max-w-7xl mx-auto">
         <div className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <SearchFilterBar onSearch={handleSearch} />
-            </div>
-            <div>
-              <RiskPieChart data={riskData} />
-            </div>
-          </div>
+          <div className="rightBox flex flex-col gap-6">
+  <SearchFilterBar onSearch={handleSearch} />
+  <div className="RiskBox flex flex-row gap-4">
+    <WelcomeSection />
+    <RiskPieChart data={riskData} />
+  </div>
+</div>
 
-          <WelcomeSection />
+
+        
 
           <RiskCategoryTiles counts={riskCounts} />
 
