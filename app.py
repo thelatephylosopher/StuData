@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
+import numpy as np
 
 # --- Define Constants ---
 MODEL_FILENAME = 'model_pipeline.joblib'
@@ -52,23 +53,20 @@ def train_and_save_model():
     categorical_transformer = OneHotEncoder(handle_unknown='ignore')
 
     # Create a preprocessor with ColumnTransformer
-    # We apply transformations to numerical/categorical columns and pass the rest through.
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', numerical_transformer, [col for col in numerical_features if col not in sensitive_features_list]),
             ('cat', categorical_transformer, [col for col in categorical_features if col not in sensitive_features_list])
         ],
-        remainder='passthrough'  # This keeps sensitive features in the dataset
+        remainder='passthrough'
     )
 
     # --- Model Training ---
-    # Create the full pipeline
     model_pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('classifier', DecisionTreeClassifier(random_state=42))
     ])
 
-    # Train the model (using the entire dataset for the final API model)
     print("⏳ Training the classification model...")
     model_pipeline.fit(X, y)
     print("✅ Model training complete.")
@@ -82,25 +80,24 @@ def train_and_save_model():
 # 2. FLASK API SETUP
 # ==============================================================================
 
-# Initialize the Flask application
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing for all routes
+CORS(app)
 
-# --- Load the Model and Data Columns ---
-# This part runs only once when the server starts.
+# --- Load the Model and Data ---
 try:
-    # Check if the model file exists, if not, train it.
     if not os.path.exists(MODEL_FILENAME):
         print(f"'{MODEL_FILENAME}' not found. Running training process...")
         if not train_and_save_model():
-            exit() # Exit if training fails (e.g., data.csv not found)
+            exit()
     
-    # Load the pre-trained model pipeline
     model_pipeline = joblib.load(MODEL_FILENAME)
     print(f"✅ Model pipeline '{MODEL_FILENAME}' loaded successfully.")
 
-    # Load column names from the original dataset to ensure API input consistency
-    original_df_columns = pd.read_csv(DATA_FILENAME, sep=';', quotechar='"').drop('Target', axis=1).columns.tolist()
+    df = pd.read_csv(DATA_FILENAME, sep=';', quotechar='"')
+    # Add a unique ID to each row for easy fetching
+    df['id'] = range(1, len(df) + 1)
+    
+    original_df_columns = df.drop(['Target', 'id'], axis=1).columns.tolist()
     print("✅ Original data columns loaded for input validation.")
 
 except Exception as e:
@@ -113,33 +110,39 @@ def index():
     """A simple root endpoint to confirm the API is running."""
     return "✅ Student Outcome Prediction API is running."
 
+@app.route('/data', methods=['GET'])
+def get_data():
+    """Returns the entire student dataset as JSON."""
+    # Replace NaN with None for JSON compatibility
+    df_json = df.replace({np.nan: None})
+    return jsonify(df_json.to_dict(orient='records'))
+
+@app.route('/student/<int:student_id>', methods=['GET'])
+def get_student(student_id):
+    """Returns data for a single student by ID."""
+    student_data_df = df[df['id'] == student_id]
+    if student_data_df.empty:
+        return jsonify({"error": "Student not found"}), 404
+    
+    # Replace NaN with None for JSON compatibility
+    student_data_json = student_data_df.replace({np.nan: None})
+    return jsonify(student_data_json.to_dict(orient='records')[0])
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    """
-    Receives student data in JSON format, preprocesses it, and returns a prediction.
-    """
+    """Receives student data and returns a prediction."""
     try:
-        # Get data from the POST request's JSON body
         data = request.get_json()
         if not data:
             return jsonify({"error": "No input data provided"}), 400
 
-        # Convert incoming JSON data (can be a single record or a list) to a DataFrame
-        # The 'orient="records"' is important if you send a list of dictionaries
         input_df = pd.DataFrame.from_records(data)
+        input_df = input_df.reindex(columns=original_df_columns, fill_value=0)
 
-        # Ensure the DataFrame has all the necessary columns in the correct order
-        # This handles cases where the input might be missing columns.
-        input_df = input_df.reindex(columns=original_df_columns, fill_value=None)
-
-        # Use the loaded pipeline to preprocess and predict
         predictions = model_pipeline.predict(input_df)
-
-        # Return the predictions as a JSON response
         return jsonify(predictions.tolist())
 
     except Exception as e:
-        # Log the error for debugging and return a generic server error message
         app.logger.error(f"An error occurred during prediction: {e}")
         return jsonify({'error': 'An internal server error occurred.'}), 500
 
@@ -147,9 +150,6 @@ def predict():
 # 3. RUN THE APPLICATION
 # ==============================================================================
 if __name__ == '__main__':
-    # This block starts the Flask server when you run 'python app.py'
-    # host='0.0.0.0' makes the app accessible on your local network
-    # port=8080 is a standard port for development
     print("🚀 Starting Flask server...")
     print("➡️  Access the API at http://127.0.0.1:8080")
     app.run(host='0.0.0.0', port=8080, debug=True)
