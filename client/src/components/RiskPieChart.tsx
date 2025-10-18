@@ -28,7 +28,7 @@ export default function RiskPieChart({ data }: RiskPieChartProps) {
         </p>
       </div>
       
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
             data={chartData}

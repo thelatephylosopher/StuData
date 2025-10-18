@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import NavBar from "@/components/NavBar";
-import DisclaimerBar from "@/components/DisclaimerBar";
-import SearchFilterBar, { type SearchFilters } from "@/components/SearchFilterBar";
-import RiskPieChart, { type RiskData } from "@/components/RiskPieChart";
-import WelcomeSection from "@/components/WelcomeSection";
-import RiskCategoryTiles, { type RiskCounts } from "@/components/RiskCategoryTiles";
-import StudentsTable, { type Student } from "@/components/StudentsTable";
+import NavBar from "../components/NavBar";
+import DisclaimerBar from "../components/DisclaimerBar";
+import SearchFilterBar, { type SearchFilters } from "../components/SearchFilterBar";
+import RiskPieChart, { type RiskData } from "../components/RiskPieChart";
+import WelcomeSection from "../components/WelcomeSection";
+import RiskCategoryTiles, { type RiskCounts } from "../components/RiskCategoryTiles";
+import StudentsTable, { type Student } from "../components/StudentsTable";
 
-const courseMap: { [key: number]: string } = {
+const courseNameMap: { [key: number]: string } = {
   171: "Biofuel Production Tech",
   9003: "Agronomy",
   9070: "Communication Design",
@@ -26,6 +26,9 @@ const courseMap: { [key: number]: string } = {
   33: "Veterinary Nursing",
   8014: "Social Service (Evening)",
 };
+
+// Generate the list of unique course names directly from the map
+const allCourseNames = Array.from(new Set(Object.values(courseNameMap))).sort();
 
 export default function HomePage() {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -49,10 +52,9 @@ export default function HomePage() {
         const formattedStudents = data.map((student: any) => ({
           id: student.id.toString(),
           name: `Student ${student.id}`,
-          course: courseMap[student.Course] || "Unknown Course",
+          course: courseNameMap[student.Course] || "Unknown Course",
           program: "Undergraduate",
           cohort: String(student['Age at enrollment'] > 23 ? 2020 : 2022),
-          // FIX: Keep currentGPA as a number, not a string.
           currentGPA: student["Curricular units 2nd sem (grade)"] > 0 ? student["Curricular units 2nd sem (grade)"] / 5 : 0,
           riskLevel: student.Target === "Dropout" ? "high" : student.Target === "Enrolled" ? "medium" : "low",
         }));
@@ -83,12 +85,16 @@ export default function HomePage() {
         );
     }
     
+    if (filters.course !== "all") {
+        studentsToFilter = studentsToFilter.filter(student => student.course === filters.course);
+    }
+
     if (filters.riskCategory !== "all") {
         studentsToFilter = studentsToFilter.filter(student => student.riskLevel === filters.riskCategory);
     }
 
     setFilteredStudents(studentsToFilter);
-  }, [filters, allStudents]);
+}, [filters, allStudents]);
 
 
   const handleSearch = (newFilters: SearchFilters) => {
@@ -106,11 +112,11 @@ export default function HomePage() {
       <main className="pt-24 px-6 max-w-7xl mx-auto">
         <div className="space-y-8">
           <div className="rightBox flex flex-col">
-            <SearchFilterBar onSearch={handleSearch} />
-            <div className="RiskBox grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="RiskBox grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8">
               <WelcomeSection />
               <RiskPieChart data={riskData} />
             </div>
+            <SearchFilterBar onSearch={handleSearch} courses={allCourseNames} />
           </div>
 
           <RiskCategoryTiles counts={riskCounts} />

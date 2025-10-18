@@ -3,8 +3,7 @@ import { User, Calendar, GraduationCap } from "lucide-react";
 export interface StudentInfo {
   name: string;
   course: string;
-  yearJoined: number;
-  idealGraduationYear: number;
+  age: number;
 }
 
 interface StudentDetailHeaderProps {
@@ -29,13 +28,8 @@ export default function StudentDetailHeader({ student }: StudentDetailHeaderProp
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Joined:</span>
-              <span className="text-foreground" data-testid="text-year-joined">{student.yearJoined}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Expected Graduation:</span>
-              <span className="text-foreground" data-testid="text-graduation-year">{student.idealGraduationYear}</span>
+              <span className="text-muted-foreground">Age:</span>
+              <span className="text-foreground" data-testid="text-year-joined">{student.age}</span>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
-export type RiskLevel = "critical" | "medium" | "low";
+export type RiskLevel = "critical" | "medium" | "on-track";
 
 export interface PredictionFactor {
   name: string;
@@ -34,7 +34,7 @@ export default function ModelPrediction({ riskLevel, factors }: ModelPredictionP
           bgColor: "bg-chart-2/10",
           text: "medium risk"
         };
-      case "low":
+      case "on-track":
         return {
           label: "Graduate - On Track",
           color: "text-chart-1",
@@ -59,7 +59,7 @@ export default function ModelPrediction({ riskLevel, factors }: ModelPredictionP
         </p>
       </div>
 
-      <Button
+      {/* <Button
         variant="ghost"
         className="w-full justify-between hover-elevate"
         onClick={() => {
@@ -70,9 +70,9 @@ export default function ModelPrediction({ riskLevel, factors }: ModelPredictionP
       >
         <span className="text-sm font-medium">Learn More</span>
         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-      </Button>
+      </Button> */}
 
-      {isExpanded && (
+      {/* {isExpanded && (
         <div className="mt-4 p-4 bg-muted rounded-md" data-testid="section-factors">
           <h4 className="text-sm font-semibold text-foreground mb-3">Top 5 Factors Influencing Model Prediction</h4>
           <div className="space-y-3">
@@ -92,7 +92,7 @@ export default function ModelPrediction({ riskLevel, factors }: ModelPredictionP
             </p>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -59,12 +59,11 @@ export default function StudentDetailPage() {
       fetch(`http://127.0.0.1:8080/student/${studentId}`)
         .then((res) => res.json())
         .then((data) => {
-          const yearJoined = new Date().getFullYear() - (new Date().getFullYear() - data['Age at enrollment'] + 18);
+          const age = data['Age at enrollment'];
           setStudentInfo({
             name: `Student ${data.id}`,
             course: courseMap[data.Course] || "Unknown Course",
-            yearJoined: yearJoined,
-            idealGraduationYear: yearJoined + 4,
+            age: age,
           });
           
           const gpa1 = data["Curricular units 1st sem (grade)"] > 0 ? data["Curricular units 1st sem (grade)"] / 5 : 2.5 + Math.random();

@@ -6,8 +6,7 @@ export default function StudentDetailHeaderExample() {
       student={{
         name: "Emma Martinez",
         course: "Computer Science",
-        yearJoined: 2022,
-        idealGraduationYear: 2026
+        age: 20,
       }}
     />
   )
