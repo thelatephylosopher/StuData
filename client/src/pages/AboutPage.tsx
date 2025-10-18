@@ -59,8 +59,14 @@ export default function AboutPage() {
             <p className="leading-relaxed text-muted-foreground">
               This tool provides predictions based on historical patterns and should be used as one of many indicators. Always consult with students, advisors, and other stakeholders before making any decisions. The model's predictions are not deterministic and should inform, not dictate, interventions.
             </p>
+            <img
+            src="/about_us.png" // Make sure this path matches the image in your client/public folder
+            alt="Educational environment"
+            className="mt-8 rounded-lg shadow-xl w-full h-auto object-cover"
+          />
           </div>
         </div>
+
       </main>
 
       <DisclaimerBar />
