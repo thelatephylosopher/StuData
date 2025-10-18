@@ -46,7 +46,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8080/data")
+    fetch("https://studata.onrender.com/data")
       .then((res) => res.json())
       .then((data) => {
         const formattedStudents = data.map((student: any) => ({
@@ -112,7 +112,7 @@ export default function HomePage() {
       <main className="pt-24 px-6 max-w-7xl mx-auto">
         <div className="space-y-8">
           <div className="rightBox flex flex-col">
-            <div className="RiskBox grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8">
+            <div className="RiskBox grid grid-cols-1 md:grid-cols-2 items-center mt-8">
               <WelcomeSection />
               <RiskPieChart data={riskData} />
             </div>

@@ -56,7 +56,7 @@ export default function StudentDetailPage() {
 
   useEffect(() => {
     if (studentId) {
-      fetch(`http://127.0.0.1:8080/student/${studentId}`)
+      fetch(`https://studata.onrender.com/student/${studentId}`)
         .then((res) => res.json())
         .then((data) => {
           const age = data['Age at enrollment'];
