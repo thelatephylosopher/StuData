@@ -3,6 +3,7 @@ import DisclaimerBar from "@/components/DisclaimerBar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
+import aboutUsImage from "./about_us.png"; // Import the image
 
 export default function AboutPage() {
   return (
@@ -59,14 +60,16 @@ export default function AboutPage() {
             <p className="leading-relaxed text-muted-foreground">
               This tool provides predictions based on historical patterns and should be used as one of many indicators. Always consult with students, advisors, and other stakeholders before making any decisions. The model's predictions are not deterministic and should inform, not dictate, interventions.
             </p>
-            <img
-            src="/about_us.png" // Make sure this path matches the image in your client/public folder
-            alt="Educational environment"
-            className="mt-8 rounded-lg shadow-xl w-full h-auto object-cover"
-          />
           </div>
+          <h2 className="text-xl font-semibold mt-6">About Model Fairness</h2>
+            <div className="mt-12 flex justify-center">
+          <img
+            src={aboutUsImage}
+            alt="Educational environment with students"
+            className="rounded-lg shadow-xl w-full h-auto object-cover"
+          />
         </div>
-
+        </div>
       </main>
 
       <DisclaimerBar />
