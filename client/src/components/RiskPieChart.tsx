@@ -1,60 +1,59 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { PieChart, Pie, Cell } from "recharts";
 
-export interface RiskData {
-  lowRisk: number;
-  mediumRisk: number;
-  highRisk: number;
-}
+const chartData = [
+  { risk: "high", students: 12, fill: "hsl(var(--chart-1))" },
+  { risk: "medium", students: 23, fill: "hsl(var(--chart-2))" },
+  { risk: "low", students: 65, fill: "hsl(var(--chart-3))" },
+];
 
-interface RiskPieChartProps {
-  data: RiskData;
-}
+const chartConfig = {
+  students: {
+    label: "Students",
+  },
+  high: {
+    label: "High Risk",
+    color: "hsl(var(--chart-1))",
+  },
+  medium: {
+    label: "Medium Risk",
+    color: "hsl(var(--chart-2))",
+  },
+  low: {
+    label: "Low Risk",
+    color: "hsl(var(--chart-3))",
+  },
+};
 
-export default function RiskPieChart({ data }: RiskPieChartProps) {
-  const chartData = [
-    { name: "Low Risk (Graduate)", value: data.lowRisk, color: "hsl(var(--chart-1))" },
-    { name: "Medium Risk (Enrolled)", value: data.mediumRisk, color: "hsl(var(--chart-2))" },
-    { name: "High Risk (Dropout)", value: data.highRisk, color: "hsl(var(--chart-3))" },
-  ];
-
-  const total = data.lowRisk + data.mediumRisk + data.highRisk;
-
+export function RiskPieChart() {
   return (
-    <div className="pie-chart-holder bg-card border border-card-border rounded-md p-6 shadow-sm ">
-      <div className="text-center mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Risk Distribution</h3>
-        <p className="text-2xl font-bold text-primary mt-2" data-testid="text-total-students">
-          {total} <span className="text-sm font-normal text-muted-foreground">Total Students</span>
-        </p>
-      </div>
-      
-      <ResponsiveContainer width="100%" height={250}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={100}
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend 
-            verticalAlign="bottom" 
-            height={36}
-            formatter={(value, entry: any) => (
-              <span className="categories text-sm">
-                {value}: <strong>{entry.payload.value}</strong>
-              </span>
-            )}
-          />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle>Risk Distribution</CardTitle>
+      </CardHeader>
+      <CardContent className="flex items-center justify-center">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square h-[250px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie data={chartData} dataKey="students" nameKey="risk">
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 }
