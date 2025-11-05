@@ -37,7 +37,7 @@ export default function GlobalFeatureImportance() {
   }, []);
 
   // Find max value for scaling progress bars
-  const maxImportance = Math.max(...factors.map(f => f.value), 0.0001);
+  const maxImportance = Math.max(...factors.map(f => Math.abs(f.value)), 0.0001);
 
   const renderContent = () => {
     if (isLoading) {
@@ -76,8 +76,8 @@ export default function GlobalFeatureImportance() {
     // --- Render the list of features and their importance ---
     return (
       <div className="space-y-3" data-testid="factors-list">
-        {factors.map((factor, idx) => {
-          const barValue = (factor.value / maxImportance) * 100;
+        {factors.slice(0, 5).map((factor, idx) => { // Show top 5
+          const barValue = (Math.abs(factor.value) / maxImportance) * 100;
           return (
             <div key={idx}>
               <div className="flex justify-between text-xs mb-1">
@@ -95,19 +95,19 @@ export default function GlobalFeatureImportance() {
   };
 
   return (
-    <div className="bg-card border border-card-border rounded-md p-6 shadow-sm">
+    <div className="bg-card border border-card-border rounded-md p-6 shadow-sm mt-6">
       <h3 className="text-lg font-semibold text-foreground mb-4">
-        Global Model Feature Importance
+        Global Model Importance
       </h3>
       <div className="p-4 bg-muted rounded-md">
         <h4 className="text-sm font-semibold text-foreground mb-3">
-          Top 10 Factors in All Predictions
+          Top 5 Factors in All Predictions
         </h4>
         {renderContent()}
          <div className="mt-4 p-3 bg-background rounded-md border border-border">
             <p className="text-xs text-foreground leading-relaxed">
               These are the top features the model uses to make predictions across all students,
-              based on the Gini importance from the Decision Tree.
+              based on Gini importance.
             </p>
           </div>
       </div>

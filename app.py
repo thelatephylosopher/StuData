@@ -305,5 +305,5 @@ def get_local_explanation(student_id):
 # ==============================================================================
 if __name__ == '__main__':
     print("🚀 Starting Flask server...")
-    print("➡️  Access the API at https://studata.onrender.com")
-    app.run(host='0.0.0.0', port=8080, debug=False) # Debug=True can cause issues with SHAP
+    print("➡️  Access the API at  https://studata.onrender.com ")
+    app.run(host='127.0.0.1', port=8080, debug=False) # Debug=True can cause issues with SHAP

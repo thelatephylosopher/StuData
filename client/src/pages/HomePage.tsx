@@ -6,6 +6,7 @@ import RiskPieChart, { type RiskData } from "../components/RiskPieChart";
 import WelcomeSection from "../components/WelcomeSection";
 import RiskCategoryTiles, { type RiskCounts } from "../components/RiskCategoryTiles";
 import StudentsTable, { type Student } from "../components/StudentsTable";
+import GlobalFeatureImportance from "../components/GlobalFeatureImportance"; // --- 1. ADDED --- Import the new component
 
 const courseNameMap: { [key: number]: string } = {
   171: "Biofuel Production Tech",
@@ -46,7 +47,8 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://studata.onrender.com/data")
+    // --- UPDATED URL to use the hosted backend ---
+    fetch(" https://studata.onrender.com/data")
       .then((res) => res.json())
       .then((data) => {
         const formattedStudents = data.map((student: any) => ({
@@ -114,12 +116,24 @@ export default function HomePage() {
           <div className="rightBox flex flex-col">
             <div className="RiskBox grid grid-cols-1 md:grid-cols-2 items-center mt-8">
               <WelcomeSection />
-              <RiskPieChart data={riskData} />
+              {/* --- 2. ADDED --- Wrapped pie chart in a div to stack things --- */}
+              <div>
+                <RiskPieChart data={riskData} />
+              </div>
             </div>
             <SearchFilterBar onSearch={handleSearch} courses={allCourseNames} />
           </div>
 
-          <RiskCategoryTiles counts={riskCounts} />
+          {/* --- 3. ADDED --- New section for Global Importance and Risk Tiles --- */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <GlobalFeatureImportance />
+            </div>
+            <div className="lg:col-span-2">
+              <RiskCategoryTiles counts={riskCounts} />
+            </div>
+          </div>
+
 
           <StudentsTable students={filteredStudents} />
         </div>
@@ -129,4 +143,3 @@ export default function HomePage() {
     </div>
   );
 }
-

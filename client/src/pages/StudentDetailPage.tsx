@@ -55,10 +55,10 @@ export default function StudentDetailPage() {
     if (studentId) {
       setIsLoading(true);
       // --- Fetch both student data and explanation data ---
-      const fetchStudentData = fetch(`https://studata.onrender.com/student/${studentId}`)
+      const fetchStudentData = fetch(` https://studata.onrender.com/student/${studentId}`)
         .then((res) => res.json());
       
-      const fetchExplanationData = fetch(`https://studata.onrender.com/explain/local/${studentId}`)
+      const fetchExplanationData = fetch(` https://studata.onrender.com/explain/local/${studentId}`)
         .then((res) => res.json());
 
       Promise.all([fetchStudentData, fetchExplanationData])
