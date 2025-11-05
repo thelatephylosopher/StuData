@@ -6,6 +6,7 @@ import StudentDetailHeader, { type StudentInfo } from "@/components/StudentDetai
 import MetricTiles, { type MetricData } from "@/components/MetricTiles";
 import CurrentCoursesTable, { type Course } from "@/components/CurrentCoursesTable";
 import GPALineGraph, { type GPADataPoint } from "@/components/GPALineGraph";
+// --- Import the updated factor type ---
 import ModelPrediction, { type PredictionFactor } from "@/components/ModelPrediction";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -44,21 +45,26 @@ export default function StudentDetailPage() {
     { code: "ENG101", name: "Technical Writing", credits: 3, grade: "B" },
   ]);
   const [gpaData, setGpaData] = useState<GPADataPoint[]>([]);
-  const [predictionFactors] = useState<PredictionFactor[]>([ // Factors are static for now
-    { name: "Curricular units 2nd sem (grade)", importance: 24 },
-    { name: "Curricular units 1st sem (grade)", importance: 18 },
-    { name: "Previous qualification (grade)", importance: 15 },
-    { name: "Admission grade", importance: 12 },
-    { name: "Age at enrollment", importance: 10 },
-  ]);
+  
+  // --- This state is no longer static ---
+  const [predictionFactors, setPredictionFactors] = useState<PredictionFactor[]>([]);
   const [riskLevel, setRiskLevel] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (studentId) {
-      fetch(`https://studata.onrender.com/student/${studentId}`)
-        .then((res) => res.json())
-        .then((data) => {
+      setIsLoading(true);
+      // --- Fetch both student data and explanation data ---
+      const fetchStudentData = fetch(`https://studata.onrender.com/student/${studentId}`)
+        .then((res) => res.json());
+      
+      const fetchExplanationData = fetch(`https://studata.onrender.com/explain/local/${studentId}`)
+        .then((res) => res.json());
+
+      Promise.all([fetchStudentData, fetchExplanationData])
+        .then(([data, factorsData]) => {
+          
+          // --- Set Student Info ---
           const age = data['Age at enrollment'];
           setStudentInfo({
             name: `Student ${data.id}`,
@@ -84,11 +90,17 @@ export default function StudentDetailPage() {
             { semester: "Fall 2024", gpa: parseFloat(gpa2.toFixed(2)) },
           ]);
 
-          setRiskLevel(data.Target);
+          setRiskLevel(data.Target); // e.g., "Dropout"
+          
+          // --- Set the dynamic prediction factors ---
+          if (factorsData && !factorsData.error) {
+            setPredictionFactors(factorsData);
+          }
+
           setIsLoading(false);
         })
         .catch(error => {
-          console.error("Failed to fetch student data:", error);
+          console.error("Failed to fetch student data or explanations:", error);
           setIsLoading(false);
         });
     }
@@ -135,7 +147,12 @@ export default function StudentDetailPage() {
               <GPALineGraph data={gpaData} />
             </div>
             <div>
-              <ModelPrediction riskLevel={getRiskLevelForPrediction()} factors={predictionFactors} />
+              {/* --- Pass the dynamic factors and prediction to the component --- */}
+              <ModelPrediction 
+                riskLevel={getRiskLevelForPrediction()} 
+                factors={predictionFactors}
+                prediction={riskLevel} 
+              />
             </div>
           </div>
         </div>
