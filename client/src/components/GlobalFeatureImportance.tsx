@@ -97,7 +97,7 @@ export default function GlobalFeatureImportance() {
   return (
     <div className="bg-card border border-card-border rounded-md p-6 shadow-sm mt-6">
       <h3 className="text-lg font-semibold text-foreground mb-4">
-        Global Model Importance
+        An overview of how the model works
       </h3>
       <div className="p-4 bg-muted rounded-md">
         <h4 className="text-sm font-semibold text-foreground mb-3">
@@ -106,8 +106,7 @@ export default function GlobalFeatureImportance() {
         {renderContent()}
          <div className="mt-4 p-3 bg-background rounded-md border border-border">
             <p className="text-xs text-foreground leading-relaxed">
-              These are the top features the model uses to make predictions across all students,
-              based on Gini importance.
+              These are the top features the model uses to make predictions across all students.
             </p>
           </div>
       </div>

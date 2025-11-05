@@ -1,4 +1,8 @@
+import { useState } from "react"; // --- 1. Import useState ---
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { Button } from "@/components/ui/button"; // --- 2. Import Button ---
+import { ChevronDown, ChevronUp } from "lucide-react"; // --- 3. Import icons ---
+import GlobalFeatureImportance from "./GlobalFeatureImportance"; // --- 4. Import the component ---
 
 export interface RiskData {
   lowRisk: number;
@@ -11,6 +15,8 @@ interface RiskPieChartProps {
 }
 
 export default function RiskPieChart({ data }: RiskPieChartProps) {
+  const [isExpanded, setIsExpanded] = useState(false); // --- 5. Add state ---
+
   const chartData = [
     { name: "Low Risk (Graduate)", value: data.lowRisk, color: "hsl(var(--chart-1))" },
     { name: "Medium Risk (Enrolled)", value: data.mediumRisk, color: "hsl(var(--chart-2))" },
@@ -55,6 +61,25 @@ export default function RiskPieChart({ data }: RiskPieChartProps) {
           />
         </PieChart>
       </ResponsiveContainer>
+
+      {/* --- 6. Add the new expandable section --- */}
+      <div className="mt-4 border-t border-border pt-4">
+        <Button
+          variant="ghost"
+          className="w-full justify-between hover-elevate"
+          onClick={() => setIsExpanded(!isExpanded)}
+          data-testid="button-view-global"
+        >
+          <span className="text-sm font-medium">Learn more</span>
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </Button>
+
+        {isExpanded && (
+          <GlobalFeatureImportance />
+        )}
+      </div>
+      {/* --- End of new section --- */}
+
     </div>
   );
 }
